@@ -1,0 +1,31 @@
+<div class="page-header">
+  <div>
+    <h2>Runs</h2>
+    <div class="muted">Auto-refreshing every 3 seconds.</div>
+  </div>
+  <button class="btn ghost" (click)="refresh()">Refresh</button>
+</div>
+
+@if (runs().length === 0) {
+  <div class="empty">No runs yet. Trigger one from the Workflows tab.</div>
+} @else {
+  @for (r of runs(); track r.id) {
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <div>
+          <h3 style="margin: 0">{{ r.workflowId }}</h3>
+          <div class="muted mono" style="font-size: 12px; margin-top: 4px">
+            {{ r.id }} · started {{ r.startedAt | date:'short' }}
+          </div>
+        </div>
+        <span class="pill s-{{ r.status }}">{{ r.status }}</span>
+      </div>
+      <div style="margin-top: 12px">
+        <a [routerLink]="['/runs', r.id]"
+           style="color: var(--accent-2); text-decoration: none; font-weight: 600; font-size: 13px">
+          Open details →
+        </a>
+      </div>
+    </div>
+  }
+}

@@ -1,0 +1,31 @@
+<div class="page-header">
+  <div>
+    <h2>Agents</h2>
+    <div class="muted">
+      Runtime implementations: <span class="mono">{{ types().join(', ') }}</span>
+    </div>
+  </div>
+</div>
+
+@if (agents().length === 0) {
+  <div class="empty">No agents registered yet.</div>
+} @else {
+  <div class="grid">
+    @for (a of agents(); track a.id) {
+      <div class="card">
+        <h3>{{ a.name }}</h3>
+        <div class="muted mono" style="font-size: 12px">
+          id: {{ a.id }} · type: {{ a.type }}
+        </div>
+        <div style="margin-top: 8px">{{ a.description }}</div>
+
+        @if (hasConfig(a.config)) {
+          <details style="margin-top: 10px">
+            <summary>Config</summary>
+            <pre>{{ a.config | json }}</pre>
+          </details>
+        }
+      </div>
+    }
+  </div>
+}

@@ -1,0 +1,73 @@
+<div class="page-header">
+  <div>
+    <div class="muted" style="margin-bottom: 6px">
+      <a routerLink="/runs" style="color: var(--muted); text-decoration: none">← All runs</a>
+    </div>
+    @if (run(); as r) {
+      <h2>Run <span class="mono" style="font-size: 16px">{{ r.id }}</span></h2>
+      <div class="muted">Workflow: <span class="mono">{{ r.workflowId }}</span></div>
+    } @else {
+      <h2>Loading…</h2>
+    }
+  </div>
+  @if (run(); as r) {
+    <span class="pill s-{{ r.status }}">{{ r.status }}</span>
+  }
+</div>
+
+@if (run(); as r) {
+  <div class="card">
+    <div class="muted">Started: {{ r.startedAt | date:'medium' }}</div>
+    @if (r.finishedAt) {
+      <div class="muted">Finished: {{ r.finishedAt | date:'medium' }}</div>
+    }
+    @if (r.error) {
+      <pre style="color: #fca5a5; margin-top: 10px">{{ r.error }}</pre>
+    }
+  </div>
+
+  <h3 style="margin: 20px 0 10px">Steps</h3>
+
+  @for (s of steps(); track s.id) {
+    <div class="step {{ s.status }}">
+      <div class="step-head">
+        <div>
+          <strong>{{ s.name }}</strong>
+          <span class="muted mono" style="font-size: 12px">
+            · {{ s.stepId }} · {{ s.type }}
+          </span>
+        </div>
+        <span class="pill s-{{ s.status }}">{{ s.status }}</span>
+      </div>
+
+      <div class="muted" style="margin-top: 6px; font-size: 12px">
+        attempt: {{ s.attempt }}
+        @if (s.startedAt) { · started {{ s.startedAt | date:'HH:mm:ss' }} }
+        @if (s.finishedAt) { · finished {{ s.finishedAt | date:'HH:mm:ss' }} }
+      </div>
+
+      @if (s.status === 'waiting_approval') {
+        <div style="margin-top: 12px">
+          <button class="btn ok" (click)="decide(s.stepId, true)">✓ Approve</button>
+          <button class="btn danger" (click)="decide(s.stepId, false)">✕ Reject</button>
+        </div>
+      }
+
+      @if (s.output) {
+        <details style="margin-top: 10px">
+          <summary>Output</summary>
+          <pre>{{ s.output | json }}</pre>
+        </details>
+      }
+      @if (s.logs) {
+        <details style="margin-top: 6px">
+          <summary>Logs</summary>
+          <pre>{{ s.logs }}</pre>
+        </details>
+      }
+      @if (s.error) {
+        <pre style="color: #fca5a5; margin-top: 8px">{{ s.error }}</pre>
+      }
+    </div>
+  }
+}

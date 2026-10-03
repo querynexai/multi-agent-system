@@ -1,0 +1,6 @@
+@AgentFlow.Api_HostAddress = http://localhost:5037
+
+GET {{AgentFlow.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

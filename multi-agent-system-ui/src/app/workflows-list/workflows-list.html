@@ -1,0 +1,43 @@
+<div class="page-header">
+  <div>
+    <h2>Workflows</h2>
+    <div class="muted">Multi-agent DAGs available to run against the QueryNex DB.</div>
+  </div>
+  <button class="btn ghost" (click)="reload()">Refresh</button>
+</div>
+
+@if (loading()) {
+  <div class="empty">Loading workflows…</div>
+} @else if (error(); as err) {
+  <div class="empty" style="color: var(--err)">Failed to load: {{ err }}</div>
+} @else if (workflows().length === 0) {
+  <div class="empty">No workflows registered yet.</div>
+} @else {
+  <div class="grid">
+    @for (w of workflows(); track w.id) {
+      <div class="card">
+        <h3>{{ w.name }}</h3>
+        <div class="muted" style="margin-bottom: 10px">{{ w.description }}</div>
+        <div class="muted mono" style="font-size: 12px; margin-bottom: 12px">
+          id: {{ w.id }} · steps: {{ w.definition.steps.length }}
+        </div>
+
+        <div style="margin-bottom: 14px">
+          @for (s of w.definition.steps; track s.id) {
+            <div class="muted" style="font-size: 12px; line-height: 1.6">
+              <span class="mono">{{ s.id }}</span>
+              <span> · {{ s.agent || s.type || 'agent' }}</span>
+              @if (s.dependsOn?.length) {
+                <span> ← {{ s.dependsOn!.join(', ') }}</span>
+              }
+            </div>
+          }
+        </div>
+
+        <button class="btn" (click)="run(w.id)" [disabled]="running() === w.id">
+          {{ running() === w.id ? 'Starting…' : '▶  Run workflow' }}
+        </button>
+      </div>
+    }
+  </div>
+}
